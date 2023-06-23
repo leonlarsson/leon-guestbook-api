@@ -8,3 +8,8 @@ export interface GuestbookEntry {
     date: number,
     body: string,
 };
+
+export interface POSTPayload {
+    body: string;
+    name?: string;
+};

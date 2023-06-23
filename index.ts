@@ -1,4 +1,4 @@
-import { Environment } from "./types";
+import { Environment, POSTPayload } from "./types";
 
 const headers = { "Access-Control-Allow-Origin": "*" };
 
@@ -8,12 +8,12 @@ export default {
         if (env.API_KEY && request.headers.get("API-KEY") !== env.API_KEY) return unathorized();
 
         if (request.method === "POST") {
-            const body: string = await request.text();
+            const { body, name }: POSTPayload = await request.json();
             if (!body) return new Response("Missing body.", { status: 500, headers });
             if (body.length > 50) return new Response("Body is too long.", { status: 500, headers });
 
             try {
-                await env.DB.prepare("INSERT INTO entries (id, date, body) VALUES (?1, ?2, ?3)").bind(crypto.randomUUID(), new Date().getTime(), body).run();
+                await env.DB.prepare("INSERT INTO entries (id, date, body, name) VALUES (?1, ?2, ?3, ?4)").bind(crypto.randomUUID(), new Date().getTime(), body, name ?? null).run();
                 return ok();
             } catch (error) {
                 return notOk();
