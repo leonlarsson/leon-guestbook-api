@@ -1,0 +1,8 @@
+name = "leon-guestbook-api"
+main = "./index.ts"
+compatibility_date = "2023-06-23"
+
+
+d1_databases = [
+    { binding = "DB", database_name = "leon-guestbook", database_id = "2d51279c-891d-4cce-848b-33f6c8869da5", preview_database_id = "2d51279c-891d-4cce-848b-33f6c8869da5" }
+]
