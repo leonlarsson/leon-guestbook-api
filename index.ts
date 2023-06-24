@@ -29,6 +29,19 @@ export default {
             }
         }
 
+        if (request.method === "DELETE") {
+            // https://github.com/cloudflare/workers-sdk/issues/1388
+            const idToDelete = request.headers.get("id-to-delete");
+            if (!idToDelete) return new Response("Missing id.", { status: 500, headers });
+
+            try {
+                await env.DB.prepare("DELETE FROM entries WHERE id = ?1").bind(idToDelete).run();
+                return ok();
+            } catch (error) {
+                return notOk();
+            }
+        }
+
         return new Response("Not found.", { status: 404, headers });
 
     }
