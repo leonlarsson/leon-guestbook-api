@@ -1,4 +1,5 @@
-import { Environment, POSTPayload } from "./types";
+import blockedCharacters from "./lib/blockedCharacters";
+import type { Environment, POSTPayload } from "./types";
 
 const headers = { "Access-Control-Allow-Origin": "*" };
 
@@ -11,11 +12,13 @@ export default {
             const { body, name }: POSTPayload = await request.json();
             if (!body) return new Response("Missing body.", { status: 400, headers });
             if (body.length > 50) return new Response("Body is too long.", { status: 400, headers });
+            if (blockedCharacters.some(char => body.includes(char))) return new Response("Body is not allowed.", { status: 400, headers });
 
             try {
                 await env.DB.prepare("INSERT INTO entries (id, date, body, name) VALUES (?1, ?2, ?3, ?4)").bind(crypto.randomUUID(), new Date().getTime(), body, name ?? null).run();
                 return ok();
             } catch (error) {
+                console.log(error);
                 return notOk();
             }
         }
@@ -25,6 +28,7 @@ export default {
                 const { results } = await env.DB.prepare("SELECT * FROM entries ORDER BY date DESC LIMIT 100").all();
                 return Response.json(results, { headers });
             } catch (error) {
+                console.log(error);
                 return notOk();
             }
         }
@@ -38,6 +42,7 @@ export default {
                 await env.DB.prepare("DELETE FROM entries WHERE id = ?1").bind(idToDelete).run();
                 return ok();
             } catch (error) {
+                console.log(error);
                 return notOk();
             }
         }
