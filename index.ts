@@ -22,7 +22,7 @@ export default {
 
         if (request.method === "GET") {
             try {
-                const { results } = await env.DB.prepare("SELECT * FROM entries LIMIT 100").all();
+                const { results } = await env.DB.prepare("SELECT * FROM entries ORDER BY date DESC LIMIT 100").all();
                 return Response.json(results, { headers });
             } catch (error) {
                 return notOk();
