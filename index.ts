@@ -11,7 +11,7 @@ export default {
         if (request.method === "POST") {
             const { body, name }: POSTPayload = await request.json();
             if (!body) return new Response("Missing body.", { status: 400, headers });
-            if (body.length > 50) return new Response("Body is too long.", { status: 400, headers });
+            if (body.length > 100) return new Response("Body is too long.", { status: 400, headers });
             if (blockedCharacters.some(char => body.includes(char))) return new Response("Body is not allowed.", { status: 400, headers });
 
             try {
