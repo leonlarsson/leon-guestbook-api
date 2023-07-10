@@ -9,7 +9,19 @@ export interface GuestbookEntry {
     body: string,
 };
 
-export interface POSTPayload {
+export interface JournalPost {
+    id: string,
+    date: number,
+    title: string,
+    body: string,
+};
+
+export interface GuestbookPOSTPayload {
     body: string;
     name?: string;
+};
+
+export interface JournalPOSTPayload {
+    title: string;
+    body: string;
 };
