@@ -8,7 +8,9 @@ export default {
 
         if (env.API_KEY && request.headers.get("API-KEY") !== env.API_KEY) return unathorized();
 
-        if (request.method === "POST") {
+        const { pathname } = new URL(request.url);
+
+        if (request.method === "POST" && pathname === "/guestbook/entries") {
             const { body, name }: POSTPayload = await request.json();
             if (!body) return new Response("Missing body.", { status: 400, headers });
             if (body.length > 100) return new Response("Body is too long.", { status: 400, headers });
@@ -23,7 +25,7 @@ export default {
             }
         }
 
-        if (request.method === "GET") {
+        if (request.method === "GET" && pathname === "/guestbook/entries") {
             try {
                 const { results } = await env.DB.prepare("SELECT * FROM entries ORDER BY date DESC LIMIT 100").all();
                 return Response.json(results, { headers });
@@ -33,11 +35,9 @@ export default {
             }
         }
 
-        if (request.method === "DELETE") {
-            // https://github.com/cloudflare/workers-sdk/issues/1388
+        if (request.method === "DELETE" && pathname === "/guestbook/entries") {
             const idToDelete = request.headers.get("id-to-delete");
             if (!idToDelete) return new Response("Missing id.", { status: 400, headers });
-
             try {
                 await env.DB.prepare("DELETE FROM entries WHERE id = ?1").bind(idToDelete).run();
                 return ok();
